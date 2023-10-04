@@ -6,15 +6,38 @@ using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour
 {
-    private void Start()
+    public float speed;
+    private Rigidbody2D rb;
+
+    [SerializeField] private LayerMask groundLayer;
+    
+    void Start()
     {
-        List<int> intList = new List<int>();
-        intList.Add(5);  // Adds 5 to the list
-        intList.Add(6);  // Adds 6 to the list
-        
-        // Removes item at index 0
-        intList.RemoveAt(0);  
-        // print index of item 6 
-        print(intList.IndexOf(6));
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    void Update()
+    {
+        Vector3 moveVelocity = new Vector3();
+        if (Input.GetKey(KeyCode.D))
+            moveVelocity.x = speed;
+        else if (Input.GetKey(KeyCode.A))
+            moveVelocity.x = -speed;
+
+        moveVelocity.y = rb.velocity.y;
+
+        bool onGround = false;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 2f, groundLayer);
+        if (hit.collider != null)
+            onGround = true;
+
+        if (onGround)
+        {
+            float jumpVelocity = 10f;
+            if (Input.GetKeyDown("w"))
+                moveVelocity.y = jumpVelocity;
+        }
+
+        rb.velocity = moveVelocity;
     }
 }
